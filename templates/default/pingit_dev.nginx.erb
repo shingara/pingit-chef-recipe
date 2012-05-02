@@ -1,0 +1,33 @@
+upstream unicorn_<%= @host %> {
+  server localhost:<%= @listen_port %> fail_timeout=0;
+}
+
+server {
+	listen		80;
+	server_name	<%= @host %>;
+	access_log   /var/log/nginx/<%= @host %>.access.log;
+
+	location / {
+    root <%= @public_path %>;
+		# needed to forward user's IP address to rails
+		proxy_set_header  X-Real-IP  $remote_addr;
+
+		# needed for HTTPS
+		proxy_set_header  X-Forwarded-For $proxy_add_x_forwarded_for;
+		proxy_set_header Host $http_host;
+		proxy_redirect off;
+		proxy_max_temp_file_size 0;
+
+    client_max_body_size 5m;
+
+		# If the file exists as a static file serve it directly without
+		# running all the other rewite tests on it
+		if (-f $request_filename) {
+      expires      max;
+			break;
+		}
+		if (!-f $request_filename){
+			proxy_pass  http://unicorn_<%= @host %>;
+		}
+  }
+}
