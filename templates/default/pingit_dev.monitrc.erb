@@ -1,27 +1,27 @@
 check process pingit_unicorn_dev
   with pidfile /var/run/pingit/unicorn.pid
   start program = "/bin/bash -c 'cd /vagrant && source ./env && bin/unicorn -c config/unicorn.rb -D' " as uid vagrant
-  stop program = "/bin/kill -QUIT /var/run/pingit/unicorn.pid"
+  stop program = "/bin/kill -QUIT `cat /var/run/pingit/unicorn.pid`"
   if totalmem is greater than 300 MB for 10 cycles then alert
   if totalmem is greater than 400 MB for 10 cycles
-    then exec "/bin/kill -USR2 /var/run/pingit/unicorn.pid"
+    then exec "/bin/kill -USR2 `cat /var/run/pingit/unicorn.pid`"
   if cpu > 40% for 2 cycles then alert
   if cpu > 20% for 4 cycles then alert
 
 check process pingit_sidekiq_dev
   with pidfile /var/run/pingit/sidekiq.pid
   start program = "/bin/bash -c 'cd /vagrant && source ./env && bin/sidekiq -C config/sidekiq_config.conf -P /var/run/pingit/sidekiq.pid' " as uid vagrant
-  stop program = "/bin/kill -QUIT /var/run/pingit/sidekiq.pid"
+  stop program = "/bin/kill -QUIT `cat /var/run/pingit/sidekiq.pid`"
   if totalmem is greater than 200 MB for 10 cycles then alert
   if totalmem is greater than 300 MB for 10 cycles
-    then exec "/bin/kill -USR2 /var/run/pingit/sidekiq.pid"
+    then exec "/bin/kill -USR2 `cat /var/run/pingit/sidekiq.pid`"
   if cpu > 40% for 2 cycles then alert
   if cpu > 20% for 4 cycles then alert
 
 check process pingit_rufus_dev
   with pidfile /var/run/pingit/rufus.pid
   start program = "/bin/bash -c 'cd /vagrant && source ./env && script/rufus_scheduler -d -P /var/run/pingit/rufus.pid' " as uid vagrant
-  stop program = "/bin/kill -QUIT /var/run/pingit/rufus.pid"
+  stop program = "/bin/kill -QUIT `cat /var/run/pingit/rufus.pid`"
   if totalmem is greater than 50 MB for 10 cycles then alert
   if totalmem is greater than 100 MB for 10 cycles then restart
   if cpu > 40% for 2 cycles then alert

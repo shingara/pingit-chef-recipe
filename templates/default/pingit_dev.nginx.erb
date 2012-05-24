@@ -7,6 +7,10 @@ server {
 	server_name	<%= @host %>;
 	access_log   /var/log/nginx/<%= @host %>.access.log;
 
+  location /log {
+    root <%= @log_path %>;
+  }
+
 	location / {
     root <%= @public_path %>;
 		# needed to forward user's IP address to rails

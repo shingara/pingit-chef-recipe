@@ -58,7 +58,8 @@ template "/etc/nginx/sites-available/pingit_dev.conf" do
   variables({
     :listen_port => node[:pingit][:web_port],
     :host => 'pingit.dev',
-    :public_path => '/vagrant/public'
+    :public_path => '/vagrant/public',
+    :log_path => '/vagrant/log'
   })
 end
 
